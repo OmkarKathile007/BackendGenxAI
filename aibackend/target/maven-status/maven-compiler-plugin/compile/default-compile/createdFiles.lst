@@ -1,0 +1,3 @@
+com\genaibackend\aibackend\AibackendApplication.class
+com\genaibackend\aibackend\controller\AIController.class
+com\genaibackend\aibackend\service\AIService.class
