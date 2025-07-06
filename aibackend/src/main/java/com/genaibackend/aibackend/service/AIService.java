@@ -50,26 +50,40 @@ public class AIService {
     }
 
 
-    public String getConvertedResponse(String inputCode,String outputCode) {
+     public String getConvertedResponse(String inputCode, String inputLang, String outputLang) {
+        // 1. Define a crystal‑clear system role and instructions
+        String template =
+                "You are a highly accurate code conversion assistant.%n" +
+                        "Convert code from %s to %s. " +
+                        "Return *only* the converted code inside triple backticks, with no explanations.%n%n" +
+                        "### Original %s Code%n" +
+                        "```%s%n" +
+                        "```%n%n" +
+                        "### Converted %s Code%n" +
+                        "```";
 
-        StringBuilder res=new StringBuilder("Convert the following "+inputCode+" code to "+outputCode);
+        // 2. Fill in the template
+        String prompt = String.format(template,
+                inputLang, outputLang,
+                inputLang, inputCode,
+                outputLang);
+
         Map<String, Object> requestBody = Map.of(
                 "contents", new Object[] {
                         Map.of("parts", new Object[] {
-                                Map.of("text", res.toString())
-                        } )
+                                Map.of("text", prompt)
+                        })
                 }
         );
 
-        // Make API Call
+        // 3. Make the API call
         String response = webClient.post()
                 .uri(geminiApiUrl + geminiApiKey)
-                .header("Content-Type","application/json")
+                .header("Content-Type", "application/json")
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-
 
         return response;
     }
